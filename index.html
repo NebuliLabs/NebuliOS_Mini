@@ -1,1 +1,421 @@
-coming VERY SOON
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NebuliOS Mini</title>
+  <script defer src="https://cdn.jsdelivr.net/gh/NebuliLabs/NebuliOS_Mini/sandstone.js"></script>
+
+  <style>
+    :root {
+      --nebuli-bg: #000000;
+      --nebuli-fg: #e0e0ff;
+      --nebuli-accent: #ffe587;
+      --nebuli-accent2: #ffc800;
+      --nebuli-button-bg: #2c1c3d;
+      --nebuli-button-hover: #402959;
+      --nebuli-modal-bg: rgba(0, 0, 0, 0.85);
+      --nebuli-popup-bg: #1a1a2e;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--nebuli-fg);
+      background: var(--nebuli-bg);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    canvas#starfield {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+    }
+
+    h1 {
+      margin-bottom: 15px;
+      font-size: 2em;
+      color: var(--nebuli-accent2);
+      text-shadow: 0 0 10px var(--nebuli-accent);
+    }
+
+    #searchBar {
+      width: 320px;
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid var(--nebuli-accent);
+      border-radius: 8px;
+      outline: none;
+      margin-bottom: 15px;
+      background: #111;
+      color: var(--nebuli-fg);
+      box-shadow: 0 0 12px var(--nebuli-accent2);
+    }
+
+    .buttonRow {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .buttonRow button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      background: var(--nebuli-button-bg);
+      color: var(--nebuli-fg);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .buttonRow button:hover {
+      background: var(--nebuli-button-hover);
+      box-shadow: 0 0 8px var(--nebuli-accent);
+    }
+
+    iframe#frame {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none;
+      z-index: 10;
+    }
+    #home-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+    }
+
+    #center-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    #backBtn {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      background: var(--nebuli-accent);
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+      display: none;
+      z-index: 20;
+      font-size: 18px;
+    }
+
+    #backBtn:hover {
+      background: var(--nebuli-accent2);
+    }
+
+    #settingsBtn, #dataBtn {
+      position: fixed;
+      top: 12px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      color: var(--nebuli-fg);
+      cursor: pointer;
+      z-index: 5;
+      transition: 0.2s;
+    }
+
+    #settingsBtn {
+      right: 12px;
+      background: var(--nebuli-button-bg);
+    }
+    #settingsBtn:hover {
+      background: var(--nebuli-button-hover);
+      box-shadow: 0 0 8px var(--nebuli-accent);
+    }
+
+    #dataBtn {
+      right: 100px;
+      background: var(--nebuli-button-bg);
+    }
+    #dataBtn:hover {
+      background: var(--nebuli-button-hover);
+      box-shadow: 0 0 8px var(--nebuli-accent);
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: var(--nebuli-modal-bg);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .modal-content {
+      background-color: var(--nebuli-popup-bg);
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px var(--nebuli-accent2);
+      width: 90%;
+      max-width: 600px;
+      color: var(--nebuli-fg);
+      max-height: 80%;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-content label, .modal-content input, .modal-content pre {
+      display: block;
+      margin-bottom: 15px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .modal-content button {
+      padding: 8px 15px;
+      background: var(--nebuli-accent);
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .copyBtn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
+  </style>
+</head>
+<body id="body-content">
+  <canvas id="starfield"></canvas>
+
+  <button id="settingsBtn">Wisp</button>
+  <button id="dataBtn"> Data:Text</button>
+
+<div id="home-content">
+  <div id="center-container">
+    <h1>NebuliOS Mini</h1>
+    <input type="text" id="searchBar" placeholder="Search the web...">
+    <div class="buttonRow">
+      <button id="btn1">AI</button>
+      <button id="btn2">Music</button>
+      <button id="btn3">Code Editor</button>
+      <button id="btn4">Chat</button>
+      <button id="btn5">Games</button>
+      <button id="btn6">Movies & TV</button>
+    </div>
+  </div>
+</div>
+
+  <button id="backBtn">🏠</button>
+  <iframe id="frame"></iframe>
+
+  <div id="wispModal" class="modal">
+    <div class="modal-content">
+      <h2>Sandstone Wisp Settings</h2>
+      <label for="wispServerUrl">Wisp Server URL:</label>
+      <input type="text" id="wispServerUrl" placeholder="wss://anura.pro" value="wss://anura.pro">
+      <button id="saveWispSettings">Save & Close</button>
+    </div>
+  </div>
+
+  <div id="dataModal" class="modal">
+    <div class="modal-content">
+      <h2>Data Text</h2>
+      <button class="copyBtn" id="copyDataBtn">Copy</button>
+      <pre id="dataContent">Loading...</pre>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("starfield");
+    const ctx = canvas.getContext("2d");
+    let stars = [];
+    const numStars = 150;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < numStars; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2,
+          speed: 0.3 + Math.random() * 0.7,
+          color: "#ffffff"
+        });
+      }
+    }
+    initStars();
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let star of stars) {
+        ctx.fillStyle = star.color;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+        star.x -= star.speed;
+        if (star.x < 0) {
+          star.x = canvas.width;
+          star.y = Math.random() * canvas.height;
+          star.size = Math.random() * 2;
+        }
+      }
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();
+
+    const searchBar = document.getElementById("searchBar");
+    const backBtn = document.getElementById("backBtn");
+    const homeContent = document.getElementById("home-content");
+    const bodyContent = document.getElementById("body-content");
+    const settingsBtn = document.getElementById("settingsBtn");
+    const dataBtn = document.getElementById("dataBtn");
+    const wispModal = document.getElementById("wispModal");
+    const dataModal = document.getElementById("dataModal");
+    const dataContent = document.getElementById("dataContent");
+    const wispServerUrlInput = document.getElementById("wispServerUrl");
+    const saveWispSettingsBtn = document.getElementById("saveWispSettings");
+    const copyDataBtn = document.getElementById("copyDataBtn");
+
+    let currentFrameController = null;
+    const DEFAULT_WISP_SERVER = "wss://anura.pro";
+    const DATA_URL_RAW = "https://raw.githubusercontent.com/NebuliLabs/NebuliOS_Mini/refs/heads/main/dataurl";
+
+    function getWispServer() {
+      return localStorage.getItem('wispServer') || DEFAULT_WISP_SERVER;
+    }
+
+    function applyWispServer(serverUrl) {
+      if (window.sandstone && sandstone.libcurl) {
+        sandstone.libcurl.set_websocket(serverUrl);
+      }
+    }
+
+    wispServerUrlInput.value = getWispServer();
+    setTimeout(() => applyWispServer(getWispServer()), 1500);
+
+    settingsBtn.addEventListener('click', () => {
+      wispServerUrlInput.value = getWispServer();
+      wispModal.style.display = 'flex';
+    });
+
+    saveWispSettingsBtn.addEventListener('click', () => {
+      const newUrl = wispServerUrlInput.value.trim() || DEFAULT_WISP_SERVER;
+      localStorage.setItem('wispServer', newUrl);
+      applyWispServer(newUrl);
+      wispModal.style.display = 'none';
+    });
+
+    wispModal.addEventListener('click', (e) => {
+      if (e.target === wispModal) wispModal.style.display = 'none';
+    });
+
+    dataBtn.addEventListener('click', () => {
+      dataModal.style.display = 'flex';
+      dataContent.textContent = "Loading...";
+      fetch(DATA_URL_RAW)
+        .then(res => res.text())
+        .then(text => dataContent.textContent = text)
+        .catch(() => dataContent.textContent = "Failed to fetch file.");
+    });
+
+    copyDataBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(dataContent.textContent);
+    });
+
+    dataModal.addEventListener('click', (e) => {
+      if (e.target === dataModal) dataModal.style.display = 'none';
+    });
+
+    function showHome() {
+      if (currentFrameController) {
+        currentFrameController.iframe.remove();
+        currentFrameController = null;
+      }
+      backBtn.style.display = "none";
+      settingsBtn.style.display = "inline-block";
+      dataBtn.style.display = "inline-block";
+      homeContent.style.display = "flex";
+      bodyContent.style.flexDirection = 'column';
+      bodyContent.style.justifyContent = 'center';
+      bodyContent.style.alignItems = 'center';
+      bodyContent.style.overflow = 'hidden';
+      searchBar.value = "";
+    }
+
+    function loadNebuliMini(url) {
+      homeContent.style.display = "none";
+      settingsBtn.style.display = "none";
+      dataBtn.style.display = "none";
+      bodyContent.style.overflow = 'auto';
+
+      if (!currentFrameController && window.sandstone && sandstone.controller) {
+        currentFrameController = new sandstone.controller.ProxyFrame();
+        currentFrameController.iframe.style.width = "100%";
+        currentFrameController.iframe.style.height = "100vh";
+        currentFrameController.iframe.style.border = "none";
+        currentFrameController.iframe.style.position = "fixed";
+        currentFrameController.iframe.style.top = "0";
+        currentFrameController.iframe.style.left = "0";
+        currentFrameController.iframe.style.zIndex = "10";
+        bodyContent.appendChild(currentFrameController.iframe);
+      }
+
+      if (currentFrameController) {
+        currentFrameController.navigate_to(url);
+      } else {
+        alert("Sandstone proxy not yet loaded. Please wait a moment and try again.");
+        showHome();
+        return;
+      }
+
+      backBtn.style.display = "inline-block";
+    }
+
+    searchBar.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        let query = searchBar.value.trim();
+        if (!query) return;
+        let url;
+        if (query.startsWith("http://") || query.startsWith("https://")) url = query;
+        else if (query.includes(".")) url = "https://" + query;
+        else url = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
+        loadNebuliMini(url);
+      }
+    });
+
+    document.getElementById("btn1").addEventListener("click", () => loadNebuliMini("https://os.nebulilabs.xyz/mynd_ai.html"));
+    document.getElementById("btn2").addEventListener("click", () => loadNebuliMini("https://os.nebulilabs.xyz/musicplayer.html"));
+    document.getElementById("btn3").addEventListener("click", () => loadNebuliMini("https://os.nebulilabs.xyz/code_editor.html"));
+    document.getElementById("btn4").addEventListener("click", () => loadNebuliMini("https://os.nebulilabs.xyz/chat.html"));
+    document.getElementById("btn5").addEventListener("click", () => loadNebuliMini("https://os.nebulilabs.xyz/games.html"));
+    document.getElementById("btn6").addEventListener("click", () => loadNebuliMini("https://os.nebulilabs.xyz/nebuflix.html"));
+
+    backBtn.addEventListener("click", showHome);
+  </script>
+</body>
+</html>
